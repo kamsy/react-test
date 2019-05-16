@@ -1,0 +1,40 @@
+
+// Typography
+$basefont: 15px;
+$femtofont: 0.515rem;
+$picofont: 0.715rem;
+$nanofont: 0.815rem;
+$nanofont2: 0.8125rem;
+$microfont: 0.915rem;
+$smallfont: 1.100rem;
+$mediumfont: 1.255rem;
+$largefont: 1.355rem;
+$titlefont: 1.5625rem;
+$megafont: 1.655rem;
+
+//Colors
+$pri-color: #023258;
+$pri-color-light: #1C4769;
+$sec-color: #F7921D;
+$sec-header: 34px;
+$resource-p-color: #6d6d6d;
+$input-bgcolor: rgba(0, 0, 0, 0.08);
+$auth-bgcolor: rgba(0, 0, 0, 0.15);
+$input-plchldcol: rgba(255, 255, 255, 0.4);
+$input-plchld-bgcol: rgba(255, 255, 255, 0.08);
+$BodyFontColor: rgba(0, 0, 0, 0.7);
+$modal-bg: rgba(0, 0, 0, 0.9);
+
+// Breakpoints
+
+// Small tablets and large smartphones (landscape view)
+$s-sm-min: 576px;
+
+// Small tablets (portrait view)
+$s-md-min: 768px;
+
+// Tablets and small desktops
+$s-lg-min: 992px;
+
+// Large tablets and desktops
+$s-xl-min: 1200px;

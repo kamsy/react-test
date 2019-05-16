@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Products Grid</title>
+        <link rel="stylesheet" href="kamsi.css" />
+    </head>
+    <body>
+        <header>
+            <h1>Products Grid</h1>
+
+            <p>
+                Here you're sure to find a bargain on some of the finest ascii
+                available to purchase. Be sure to peruse our selection of ascii
+                faces in an exciting range of sizes and prices.
+            </p>
+
+            <p>But first, a word from our sponsors:</p>
+            <script>
+                document.write(
+                    '<img class="ad" src="/ads/?r=' +
+                        Math.floor(Math.random() * 1000) +
+                        '"/>'
+                );
+            </script>
+        </header>
+
+        <section class="products">
+            ... products go here ...
+        </section>
+
+        <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+
+        <script type="text/babel" src="./App.js"></script
+        >`
+    </body>
+</html>
