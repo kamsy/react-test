@@ -3,6 +3,7 @@
 @import "../scss/reset";
 @import "../scss/loadingpage";
 
+
 .products {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -16,11 +17,54 @@
     align-items: center;
 }
 
+
+.sorter-controllers {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    width: 200px;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    margin-bottom: 2rem;
+    position: relative;
+
+    .cont-btn {
+        padding: 0.7rem 1.5rem;
+        background: #fff;
+        border: 1px solid #999;
+        border-radius: 0.5rem;
+        cursor: pointer;
+    }
+}
+
+.dropdown {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    background: white;
+    border: 1px solid #999;
+    border-radius: 4px;
+    width: 100px;
+    text-align: center;
+    padding: 1rem;
+    position: absolute;
+    top: 3rem;
+    left: -20px;
+    z-index: 20;
+
+    span {
+        padding: 0.25rem
+    }
+}
+
 .grid-cont {
     display: -ms-grid;
     display: grid;
-    -ms-grid-columns: 1fr 20px 1fr 20px 1fr 20px 1fr;
-    grid-template-columns: repeat(4, 1fr);
+
+    -ms-grid-columns: 1fr 20px 1fr 20px 1fr;
+
+    grid-template-columns: repeat(3, 1fr);
     -ms-grid-rows: auto;
     grid-template-rows: auto;
     grid-gap: 20px;
@@ -39,9 +83,10 @@
         border: 1px solid #999;
         border-radius: 0.25rem;
         height: 200px;
-        width: 250px;
+        width: 300px;
         padding: 1rem;
         position: relative;
+        cursor: pointer;
 
         hr {
             width: 100%;
@@ -49,43 +94,76 @@
         }
 
         .face {
-            height: 80px;
+            height: 140px;
             width: -webkit-fit-content;
             width: -moz-fit-content;
             width: fit-content;
-            margin: 0 auto;
+            margin: 2.5rem auto 0;
 
-            &::before {
-                content: "Face";
 
-                position: absolute;
+        }
 
-                background: $sec-color;
-                color: #fff;
+        .ad::after,
+        .face::before {
 
-                width: 40px;
 
-                border-bottom-right-radius: 4.0625rem;
-                border-top-right-radius: 4.0625rem;
+            position: absolute;
 
-                display: inline-block;
-                font-size: .625rem;
-                font-weight: 600;
-                left: 0;
-                padding: .5rem .5rem .625rem;
+            background: $sec-color;
+            color: #fff;
 
-                text-align: center;
-                text-transform: uppercase;
-                top: .625rem;
-                z-index: 9;
+            width: 40px;
 
-            }
+            border-bottom-right-radius: 4.0625rem;
+            border-top-right-radius: 4.0625rem;
+
+            // display: inline-block;
+            font-size: .625rem;
+            font-weight: 600;
+
+            padding: .5rem .5rem .625rem;
+
+            text-align: center;
+            text-transform: uppercase;
+            top: .625rem;
+            z-index: 9;
+
+        }
+
+        .face::before {
+            content: "Face";
+            left: 0;
+        }
+
+        .ad::after {
+            content: 'ad';
+            background: $pri-color;
+            border-radius: 0;
+            border-bottom-left-radius: 4.0625rem;
+            border-top-left-radius: 4.0625rem;
+            right: 0;
+
         }
 
         .money {
             font-size: 2rem;
         }
     }
+}
+
+.grid-cont>*:nth-child(1) {
+    -ms-grid-row: 1;
+    -ms-grid-column: 1
+}
+
+.grid-cont>*:nth-child(2) {
+    -ms-grid-row: 1;
+    -ms-grid-column: 3
+}
+
+.grid-cont>*:nth-child(3) {
+    -ms-grid-row: 1;
+    -ms-grid-column: 5
 }
 
 .grid-cont>*:nth-child(1) {

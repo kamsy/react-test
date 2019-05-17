@@ -30,6 +30,8 @@ const formatMoney = (amount, decimalCount = 2, decimal = ".") => {
         console.log("TCL: e", e);
     }
 };
+var randomNum;
+var prevNum;
 
 class App extends Component {
     constructor(props) {
@@ -81,9 +83,7 @@ class App extends Component {
             `/api/products?_sort=${param}&_page=${currentPage}&_limit=250`
         );
         this.setState({ loading: true }, () => {
-            fetch(
-                `/api/products?_sort=${param}&_page=${currentPage}&_limit=250`
-            )
+            fetch(`/api/products?_sort=${param}&_page=${currentPage}&_limit=18`)
                 .then(res => res.json())
                 .then(result => {
                     console.log("TCL: App -> result", result);
@@ -143,31 +143,76 @@ class App extends Component {
         return;
     };
 
+    numGen = () => {
+        if (prevNum === randomNum) {
+            randomNum = Math.floor(Math.random() * 1000);
+        }
+        console.log("TCL: numGen -> randomNum", randomNum);
+        console.log("TCL: numGen -> prevNum", prevNum);
+        prevNum = randomNum;
+
+        return randomNum;
+    };
+
     render() {
         const { loading, data, hasMore, dropDown, sortParam } = this.state;
-        console.log("TCL: render -> hasMore", hasMore);
-
+        const months = [
+            "Jan",
+            "Feb",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+        ];
+        const days = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sund"];
+        const day = new Date().getDay();
+        const dd = new Date().getDate();
+        const mm = new Date().getMonth();
+        const yy = new Date().getFullYear();
         return (
             <Fragment>
-                <span onClick={this.openSorters}>Sort</span>
-                <span onClick={() => this.clearSort("")}>Clear sorter</span>
-                {sortParam !== "" ? `Sorted by ${sortParam}` : null}
-                <div
-                    style={{
-                        display: dropDown ? "flex" : "none",
-                        flexDirection: "column"
-                    }}>
-                    <span onClick={() => this.sortParamPicker("price")}>
-                        Price
+                <div className="sorter-controllers">
+                    <span onClick={this.openSorters} className="cont-btn">
+                        Sort
                     </span>
-                    <span onClick={() => this.sortParamPicker("size")}>
-                        Size
+                    <span
+                        onClick={() => this.clearSort("")}
+                        className="cont-btn">
+                        Clear sorter
                     </span>
-                    <span onClick={() => this.sortParamPicker("id")}>ID</span>
+                    <div
+                        className="dropdown"
+                        style={{
+                            display: dropDown ? "flex" : "none",
+                            flexDirection: "column"
+                        }}>
+                        <span onClick={() => this.sortParamPicker("price")}>
+                            Price
+                        </span>
+                        <span onClick={() => this.sortParamPicker("size")}>
+                            Size
+                        </span>
+                        <span onClick={() => this.sortParamPicker("id")}>
+                            ID
+                        </span>
+                    </div>
                 </div>
+
+                {sortParam !== "" ? `Sorted by ${sortParam}` : null}
                 <div className="grid-cont">
                     {data.map(datum => {
-                        const { size, price, face, id } = datum;
+                        const { size, price, face, id, date } = datum;
+                        const dateChecker = Math.floor(
+                            (new Date() - new Date(date)) /
+                                (1000 * 60 * 60 * 24)
+                        );
+
                         return (
                             <Fragment>
                                 <div className="grid-item" key={id}>
@@ -181,28 +226,29 @@ class App extends Component {
                                         {formatMoney(price)}{" "}
                                     </span>
                                     <span> Size: {size} </span>
+                                    <span>
+                                        {dateChecker === 0
+                                            ? "Today"
+                                            : dateChecker > 0 && dateChecker < 7
+                                            ? `${dateChecker} days ago`
+                                            : dateChecker === 7
+                                            ? `a week ago`
+                                            : `${days[day]}, ${
+                                                  months[mm]
+                                              } ${dd}, ${yy}`}
+                                    </span>
                                 </div>
-                                {console.log(
-                                    (data.findIndex(item => item.id === id) +
-                                        1) %
-                                        20 ===
-                                        0 &&
-                                        data.findIndex(
-                                            item => item.id === id
-                                        ) !== 0,
-                                    data.findIndex(item => item.id === id)
-                                )}
+
                                 {(data.findIndex(item => item.id === id) + 1) %
                                     20 ===
                                     0 &&
                                 data.findIndex(item => item.id === id) !== 0 ? (
-                                    <div className="grid-item">
+                                    <div
+                                        className="grid-item"
+                                        key={this.numGen()}>
                                         <img
                                             className="ad"
-                                            src={`/ads/?r=${Math.floor(
-                                                Math.random() * 1000
-                                            )}
-                        `}
+                                            src={`/ads/?r=${this.numGen()}`}
                                         />
                                     </div>
                                 ) : null}
