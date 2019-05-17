@@ -40,7 +40,8 @@ class App extends Component {
             currentPage: 1,
             error: "",
             hasMore: true,
-            dropDown: false
+            dropDown: false,
+            sortParam: ""
         };
 
         // the scroll function to fetch data...
@@ -48,13 +49,11 @@ class App extends Component {
             const {
                 fetchProducts,
                 incrementPage,
-                state: { error, loading, hasMore }
+
+                state: { error, loading, hasMore, sortParam }
             } = this;
 
-            // Bails early if:
-            // * there's an error
-            // * it's already loading
-            // * there's nothing left to load
+            // Fails early if there is  an error, it's already loading,there's nothing left to load
             if (error || loading || !hasMore) return;
 
             // Checks that the page has scrolled close to the bottom
@@ -64,7 +63,7 @@ class App extends Component {
             // console.log(scrollTop, "scrollTop");
             if (offsetHeight - window.innerHeight === scrollTop) {
                 incrementPage();
-                fetchProducts();
+                fetchProducts(sortParam);
             }
         };
     }
@@ -73,12 +72,21 @@ class App extends Component {
         this.fetchProducts();
     }
 
-    fetchProducts = () => {
+    fetchProducts = param => {
+        console.log("TCL: App -> fetchProducts -> sortParam", param);
         const { currentPage } = this.state;
+
+        console.log(
+            "TCL: App -> `/api/products?_sort=${sortParam}&_page=${currentPage}&_limit=250`;",
+            `/api/products?_sort=${param}&_page=${currentPage}&_limit=250`
+        );
         this.setState({ loading: true }, () => {
-            fetch(`/api/products?_page=${currentPage}&_limit=250`)
+            fetch(
+                `/api/products?_sort=${param}&_page=${currentPage}&_limit=250`
+            )
                 .then(res => res.json())
                 .then(result => {
+                    console.log("TCL: App -> result", result);
                     return this.setState(prevState => {
                         return {
                             data: [...prevState.data, ...result],
@@ -108,28 +116,97 @@ class App extends Component {
         });
     };
 
+    sortParamPicker = value => {
+        console.log("TCL: sortParam", value);
+
+        this.setState(
+            prevState => {
+                return {
+                    ...prevState,
+                    data: [],
+                    sortParam: value,
+                    currentPage: 1,
+                    hasMore: true,
+                    error: ""
+                };
+            },
+            () => this.fetchProducts(value)
+        );
+        this.openSorters();
+    };
+
+    clearSort = () => {
+        const { sortParam } = this.state;
+        if (sortParam !== "") {
+            this.sortParamPicker("");
+        }
+        return;
+    };
+
     render() {
-        const { loading, data, hasMore } = this.state;
+        const { loading, data, hasMore, dropDown, sortParam } = this.state;
         console.log("TCL: render -> hasMore", hasMore);
 
         return (
             <Fragment>
+                <span onClick={this.openSorters}>Sort</span>
+                <span onClick={() => this.clearSort("")}>Clear sorter</span>
+                {sortParam !== "" ? `Sorted by ${sortParam}` : null}
+                <div
+                    style={{
+                        display: dropDown ? "flex" : "none",
+                        flexDirection: "column"
+                    }}>
+                    <span onClick={() => this.sortParamPicker("price")}>
+                        Price
+                    </span>
+                    <span onClick={() => this.sortParamPicker("size")}>
+                        Size
+                    </span>
+                    <span onClick={() => this.sortParamPicker("id")}>ID</span>
+                </div>
                 <div className="grid-cont">
                     {data.map(datum => {
                         const { size, price, face, id } = datum;
                         return (
-                            <div className="grid-item" key={id}>
-                                <span
-                                    style={{ fontSize: `${size}px` }}
-                                    className="face">
-                                    {face}
-                                </span>
-                                <hr />
-                                <span className="money">
-                                    {formatMoney(price)}{" "}
-                                </span>
-                                <span> Size: {size} </span>
-                            </div>
+                            <Fragment>
+                                <div className="grid-item" key={id}>
+                                    <span
+                                        style={{ fontSize: `${size}px` }}
+                                        className="face">
+                                        {face}
+                                    </span>
+                                    <hr />
+                                    <span className="money">
+                                        {formatMoney(price)}{" "}
+                                    </span>
+                                    <span> Size: {size} </span>
+                                </div>
+                                {console.log(
+                                    (data.findIndex(item => item.id === id) +
+                                        1) %
+                                        20 ===
+                                        0 &&
+                                        data.findIndex(
+                                            item => item.id === id
+                                        ) !== 0,
+                                    data.findIndex(item => item.id === id)
+                                )}
+                                {(data.findIndex(item => item.id === id) + 1) %
+                                    20 ===
+                                    0 &&
+                                data.findIndex(item => item.id === id) !== 0 ? (
+                                    <div className="grid-item">
+                                        <img
+                                            className="ad"
+                                            src={`/ads/?r=${Math.floor(
+                                                Math.random() * 1000
+                                            )}
+                        `}
+                                        />
+                                    </div>
+                                ) : null}
+                            </Fragment>
                         );
                     })}
                 </div>

@@ -12,8 +12,8 @@
     -ms-flex-direction: column;
     flex-direction: column;
     -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
 }
 
 .grid-cont {
@@ -38,9 +38,9 @@
         background: #fff;
         border: 1px solid #999;
         border-radius: 0.25rem;
-        height: 120px;
+        height: 200px;
         width: 250px;
-        padding: 2rem 1rem;
+        padding: 1rem;
         position: relative;
 
         hr {
