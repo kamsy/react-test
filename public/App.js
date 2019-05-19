@@ -2,6 +2,7 @@ const { Component, Fragment } = React;
 
 const e = React.createElement;
 
+// simple loader
 const LoadingPage = () => {
     return (
         <div className="dot">
@@ -13,25 +14,26 @@ const LoadingPage = () => {
     );
 };
 
+// function to format the amounts properly i.e $3.21
 const formatMoney = (amount, decimalCount = 2, decimal = ".") => {
     try {
         decimalCount = Math.abs(decimalCount);
         decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
-        // to convert the asprice to a string
+        // to convert the price to a string
         let i = amount.toString();
 
+        // to get the whole number part of the currency === dollar, this depends on the length of the string
         let y = i.length > 2 ? i.length % 2 : 0;
         return (
             "$" +
             ((y ? i.substring(0, y) : 0) +
                 (decimalCount ? decimal + i.substring(y) : ""))
         );
-    } catch (e) {
-        console.log("TCL: e", e);
-    }
+    } catch (e) {}
 };
 var randomNum;
 var prevNum;
+var index;
 
 class App extends Component {
     constructor(props) {
@@ -51,18 +53,14 @@ class App extends Component {
             const {
                 fetchProducts,
                 incrementPage,
-
                 state: { error, loading, hasMore, sortParam }
             } = this;
 
-            // Fails early if there is  an error, it's already loading,there's nothing left to load
+            // Fails early if there is  an error, it's already loading, there's nothing left to load
             if (error || loading || !hasMore) return;
 
-            // Checks that the page has scrolled close to the bottom
+            // Checks that the page has scrolled close to the bottom and dispatches fetch action
             const { offsetHeight, scrollTop } = document.documentElement;
-            // console.log(window.innerHeight, "innerHeight");
-            // console.log(offsetHeight, "offsetHeight");
-            // console.log(scrollTop, "scrollTop");
             if (offsetHeight - window.innerHeight === scrollTop) {
                 incrementPage();
                 fetchProducts(sortParam);
@@ -75,18 +73,14 @@ class App extends Component {
     }
 
     fetchProducts = param => {
-        console.log("TCL: App -> fetchProducts -> sortParam", param);
         const { currentPage } = this.state;
 
-        console.log(
-            "TCL: App -> `/api/products?_sort=${sortParam}&_page=${currentPage}&_limit=250`;",
-            `/api/products?_sort=${param}&_page=${currentPage}&_limit=250`
-        );
         this.setState({ loading: true }, () => {
-            fetch(`/api/products?_sort=${param}&_page=${currentPage}&_limit=18`)
+            fetch(
+                `/api/products?_sort=${param}&_page=${currentPage}&_limit=500`
+            )
                 .then(res => res.json())
                 .then(result => {
-                    console.log("TCL: App -> result", result);
                     return this.setState(prevState => {
                         return {
                             data: [...prevState.data, ...result],
@@ -104,21 +98,21 @@ class App extends Component {
         });
     };
 
+    // to increment the counter for the next page
     incrementPage = () => {
         this.setState(prevState => {
             return { ...prevState, currentPage: prevState.currentPage + 1 };
         });
     };
-
+    // a method to display the sorter dropdown
     openSorters = () => {
         this.setState(prevState => {
             return { ...prevState, dropDown: !prevState.dropDown };
         });
     };
 
+    // handling selection of what to sort by
     sortParamPicker = value => {
-        console.log("TCL: sortParam", value);
-
         this.setState(
             prevState => {
                 return {
@@ -135,6 +129,7 @@ class App extends Component {
         this.openSorters();
     };
 
+    // clear selected sort parameter
     clearSort = () => {
         const { sortParam } = this.state;
         if (sortParam !== "") {
@@ -143,15 +138,25 @@ class App extends Component {
         return;
     };
 
+    // to generate random numbers for the ads
     numGen = () => {
-        if (prevNum === randomNum) {
-            randomNum = Math.floor(Math.random() * 1000);
+        // generates a random number
+        randomNum = Math.floor(Math.random() * 1000);
+        // checking if the random number aren't prev number are even/odd to return the randomNum
+        if (randomNum % 2 !== prevNum % 2 && prevNum !== undefined) {
+            prevNum = randomNum;
+            return randomNum;
         }
-        console.log("TCL: numGen -> randomNum", randomNum);
-        console.log("TCL: numGen -> prevNum", prevNum);
-        prevNum = randomNum;
-
-        return randomNum;
+        // checking if random number and the previous number are even/odd and then increments the randonNum, to ensure the both a different number and number type aren't the same
+        else if (randomNum % 2 === prevNum % 2) {
+            randomNum++;
+            return randomNum;
+        }
+        // returns the randomNum if the prevNum is 'undefinded'
+        else {
+            prevNum = randomNum;
+            return randomNum;
+        }
     };
 
     render() {
@@ -170,8 +175,7 @@ class App extends Component {
             "Nov",
             "Dec"
         ];
-        const days = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sund"];
-        const day = new Date().getDay();
+
         const dd = new Date().getDate();
         const mm = new Date().getMonth();
         const yy = new Date().getFullYear();
@@ -204,10 +208,15 @@ class App extends Component {
                     </div>
                 </div>
 
-                {sortParam !== "" ? `Sorted by ${sortParam}` : null}
+                {sortParam !== "" && data.length !== 0
+                    ? `Sorted by ${sortParam}`
+                    : null}
                 <div className="grid-cont">
                     {data.map(datum => {
                         const { size, price, face, id, date } = datum;
+                        /**  to convert the date to days in cardinal number... i.e 14,12,50 etc
+                            so it can be used to show however long the products has been available
+                        */
                         const dateChecker = Math.floor(
                             (new Date() - new Date(date)) /
                                 (1000 * 60 * 60 * 24)
@@ -223,7 +232,7 @@ class App extends Component {
                                     </span>
                                     <hr />
                                     <span className="money">
-                                        {formatMoney(price)}{" "}
+                                        {formatMoney(price)}
                                     </span>
                                     <span> Size: {size} </span>
                                     <span>
@@ -233,9 +242,7 @@ class App extends Component {
                                             ? `${dateChecker} days ago`
                                             : dateChecker === 7
                                             ? `a week ago`
-                                            : `${days[day]}, ${
-                                                  months[mm]
-                                              } ${dd}, ${yy}`}
+                                            : `${dd}/${months[mm]}/${yy}`}
                                     </span>
                                 </div>
 
@@ -245,7 +252,7 @@ class App extends Component {
                                 data.findIndex(item => item.id === id) !== 0 ? (
                                     <div
                                         className="grid-item"
-                                        key={this.numGen()}>
+                                        key={this.numGen().toString()}>
                                         <img
                                             className="ad"
                                             src={`/ads/?r=${this.numGen()}`}
