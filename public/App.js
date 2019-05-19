@@ -76,9 +76,7 @@ class App extends Component {
         const { currentPage } = this.state;
 
         this.setState({ loading: true }, () => {
-            fetch(
-                `/api/products?_sort=${param}&_page=${currentPage}&_limit=500`
-            )
+            fetch(`/api/products?_sort=${param}&_page=${currentPage}&_limit=20`)
                 .then(res => res.json())
                 .then(result => {
                     return this.setState(prevState => {
@@ -182,7 +180,9 @@ class App extends Component {
         return (
             <Fragment>
                 <div className="sorter-controllers">
-                    <span onClick={this.openSorters} className="cont-btn">
+                    <span
+                        onClick={!loading ? this.openSorters : null}
+                        className="cont-btn">
                         Sort
                     </span>
                     <span
@@ -234,15 +234,18 @@ class App extends Component {
                                     <span className="money">
                                         {formatMoney(price)}
                                     </span>
-                                    <span> Size: {size} </span>
-                                    <span>
-                                        {dateChecker === 0
-                                            ? "Today"
-                                            : dateChecker > 0 && dateChecker < 7
-                                            ? `${dateChecker} days ago`
-                                            : dateChecker === 7
-                                            ? `a week ago`
-                                            : `${dd}/${months[mm]}/${yy}`}
+                                    <span>{`${size} pixels`}</span>
+                                    <span className="date">
+                                        {`(${
+                                            dateChecker === 0
+                                                ? "Today"
+                                                : dateChecker > 0 &&
+                                                  dateChecker < 7
+                                                ? `${dateChecker} days ago`
+                                                : dateChecker === 7
+                                                ? `a week ago`
+                                                : `${dd}/${months[mm]}/${yy}`
+                                        })`}
                                     </span>
                                 </div>
 

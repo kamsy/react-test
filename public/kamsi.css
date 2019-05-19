@@ -391,7 +391,6 @@ header {
   -ms-flex-direction: column;
   flex-direction: column;
   background: white;
-  border: 1px solid #999;
   border-radius: 4px;
   width: 100px;
   text-align: center;
@@ -400,10 +399,17 @@ header {
   top: 3rem;
   left: -20px;
   z-index: 20;
+  -webkit-box-shadow: 0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.12), 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.08);
+  box-shadow: 0.1rem 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.12), 0.1rem 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.08);
 }
 
 .dropdown span {
   padding: 0.25rem;
+  cursor: pointer;
+}
+
+.dropdown span:hover {
+  background: rgba(247, 146, 29, 0.3);
 }
 
 .grid-cont {
@@ -433,14 +439,26 @@ header {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
-  background: #fff;
-  border: 1px solid #999;
+  background: rgba(224, 224, 224, 0.3);
   border-radius: 0.25rem;
   height: 200px;
   width: 300px;
   padding: 1rem;
   position: relative;
   cursor: pointer;
+  transition: -webkit-box-shadow .4s ease-in-out;
+  -webkit-transition: -webkit-box-shadow transform .4s ease-in-out;
+  transition: -webkit-box-shadow transform .4s ease-in-out;
+  transition: box-shadow transform .4s ease-in-out;
+  transition: box-shadow transform .4s ease-in-out, -webkit-box-shadow transform .4s ease-in-out;
+  transition: box-shadow transform .4s ease-in-out, -webkit-box-shadow .4s ease-in-out;
+}
+
+.grid-cont .grid-item:hover {
+  -webkit-transform: scale(1.05);
+  transform: scale(1.05);
+  -webkit-box-shadow: 0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.12), 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.12), 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.08);
 }
 
 .grid-cont .grid-item hr {
@@ -488,7 +506,13 @@ header {
 }
 
 .grid-cont .grid-item .money {
-  font-size: 2rem;
+  font-size: 1.5rem;
+}
+
+.grid-cont .grid-item .date {
+  margin: 0.2rem 0 0;
+  color: #999;
+  font-size: 0.8rem;
 }
 
 .grid-cont > *:nth-child(1) {
